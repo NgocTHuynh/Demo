@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OTP Verification</title>
+</head>
+<body>
+    <h2>Click the button to send OTP</h2>
+    <button id="sendOTPButton">Send OTP</button>
+    
+    <h2>Enter the OTP sent to your email</h2>
+    <form id="otpForm">
+        <label for="otp">OTP:</label>
+        <input type="text" id="otp" name="otp" maxlength="6" required>
+        <button type="submit">Verify OTP</button>
+    </form>
+    
+    <div id="message"></div>
+    
+    <script>
+        document.getElementById('sendOTPButton').addEventListener('click', function() {
+            fetch('http://localhost:3001/send-otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('message').innerText = data.message;
+            })
+            .catch(error => {
+                console.error('Error sending OTP:', error);
+                document.getElementById('message').innerText = 'Failed to send OTP';
+            });
+        });
+
+        document.getElementById('otpForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const otp = document.getElementById('otp').value;
+            fetch('http://localhost:3001/verify-otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userOTP: otp })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('message').innerText = data.message;
+            })
+            .catch(error => {
+                console.error('Error verifying OTP:', error);
+                document.getElementById('message').innerText = 'Failed to verify OTP';
+            });
+        });
+    </script>
+</body>
+</html>
